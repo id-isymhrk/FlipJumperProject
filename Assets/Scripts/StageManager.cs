@@ -23,16 +23,12 @@ public class StageManager : MonoBehaviour
 
     // Maximum Distance to generate a stage
     private float maxDistance = 2;
-    // Direction array to generate a stage
-    //Vector3[] directionList = new Vector3[] { new Vector3(1, 0, 0), new Vector3(0, 0, 1) };
     private List<Vector3> directionList = new List<Vector3> { new Vector3(1, 0, 0), new Vector3(0, 0, 1) };
 
     // Start is called before the first frame update
     void Start()
     {
         currentStage = initStage;
-        //// Direction Vector of the character
-        //CameraRelativePosition = Camera.main.transform.position - transform.position;
         stageInitPosition = initStage.transform.localPosition;
         stageInitScale = initStage.transform.localScale;
 
@@ -60,8 +56,6 @@ public class StageManager : MonoBehaviour
             GameObject go = stageSpawnList[0];
             stageSpawnList.RemoveAt(0);
             Destroy(go);
-            //go.GetComponent<Renderer>().material.DOFade(0, 1f);
-            //go.GetComponent<Renderer>().material.DOFade(1, 1).SetLoops(-1, LoopType.Yoyo);
         }
     }
 

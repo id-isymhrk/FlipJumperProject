@@ -5,7 +5,6 @@ using DG.Tweening;
 
 public class Player : MonoBehaviour
 {
-    #region settings
     // =============== Player ==============
     // Transforms of head and Body of the character
     public Transform head;
@@ -27,7 +26,7 @@ public class Player : MonoBehaviour
 
     // Relative Position of Camera
     public Camera mainCamera;
-    private Vector3 CameraRelativePosition;
+    private Vector3 cameraRelativePosition;
 
     // Enable player to input or not
     private bool enableInput = false;
@@ -44,7 +43,6 @@ public class Player : MonoBehaviour
     public AudioManager audioManager;
 
     public bool isJuicy = false;
-    #endregion
 
     // Start is called before the first frame update
     void Start()
@@ -54,7 +52,7 @@ public class Player : MonoBehaviour
         bodyInitLocalScale = body.transform.localScale;
 
         // Direction Vector of the character
-        CameraRelativePosition = mainCamera.transform.position - this.transform.position;
+        cameraRelativePosition = mainCamera.transform.position - this.transform.position;
 
         ///////////////// Set the center of mass for rigidbody
         rb.centerOfMass = Vector3.zero;
@@ -83,8 +81,6 @@ public class Player : MonoBehaviour
                     // activate the particle effect
                     particleMain.SetActive(true);
                     particleLanding.SetActive(false);
-
-
 
                     // play audio clip for "add force"
                     audioManager.PlayAudio(enumAudioClip.AddForce);
@@ -255,8 +251,7 @@ public class Player : MonoBehaviour
     private void MoveCamera()
     {
         // shake camera
-        //Camera.main.transform.DOShakePosition(0.25f, 0.075f);//new Vector3(0.01f, 0.01f, 0.01f)
-        mainCamera.transform.DOShakePosition(0.25f, 0.075f);//new Vector3(0.01f, 0.01f, 0.01f)
+        mainCamera.transform.DOShakePosition(0.25f, 0.075f);
         StartCoroutine(CameraEffect());
     }
 
@@ -264,7 +259,7 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(0.26f);
         //Camera.main.transform.DOMove(this.transform.position + CameraRelativePosition, 1);
-        mainCamera.transform.DOMove(this.transform.position + CameraRelativePosition, 1);
+        mainCamera.transform.DOMove(this.transform.position + cameraRelativePosition, 1);
     }
 
 }

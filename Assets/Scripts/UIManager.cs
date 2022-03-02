@@ -37,13 +37,6 @@ public class UIManager : MonoBehaviour
     {
         // Click restart button to reload the scene
         SceneManager.LoadScene(0);
-        //isGameOver = false;
-
-        //RestartButton.onClick.AddListener(() =>
-        //{
-        //    SceneManager.LoadScene(0);
-        //    isGameOver = false;
-        //});
     }
 
     public void OnAddScore(int lastReward)
@@ -57,12 +50,9 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void OnGameOver()
     {
-        //EnableInput = false;
         scoreText.enabled = false;
         finalScoreText.text = "Final Score:  " + score;
         restartButton.gameObject.SetActive(true);
         finalScoreText.gameObject.SetActive(true);
-        //GameOver.SetActive(true);
-        //isGameOver = true;
     }
 }
