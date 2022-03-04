@@ -31,6 +31,9 @@ public class Player : MonoBehaviour
     // Enable player to input or not
     private bool enableInput = false;
 
+    // Charge JumpPower
+    private bool charge = false;
+
     // Stop JumpAction
     private bool stopJump = false;
 
@@ -78,6 +81,7 @@ public class Player : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 Debug.Log("パワーチャージ中……");
+                charge = true;
 
                 ///////////////// Start to charge the force
                 startAddForceTime = Time.time;
@@ -98,7 +102,7 @@ public class Player : MonoBehaviour
             if (Input.GetMouseButton(0))
             {
                 // Give a boundary of scale down
-                if (!stopJump && (stageManager.currentStage.transform.localScale.y > 0.4f))
+                if (!stopJump && charge && (stageManager.currentStage.transform.localScale.y > 0.4f))
                 {
                     // Shrink the body
                     body.transform.localScale += new Vector3(1.5f, -1f, 1.5f) * 0.05f * Time.deltaTime;
@@ -132,7 +136,7 @@ public class Player : MonoBehaviour
                 }
             }
             // When release the button
-            if (!stopJump && Input.GetMouseButtonUp(0))
+            if (!stopJump && charge && Input.GetMouseButtonUp(0))
             {
                 
                 // Turn off the audio component
@@ -167,6 +171,7 @@ public class Player : MonoBehaviour
 
                 /////////////// forbid to continuous jump
                 enableInput = false;
+                charge = false;
             }
         }
     }
