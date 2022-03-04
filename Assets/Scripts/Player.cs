@@ -31,6 +31,9 @@ public class Player : MonoBehaviour
     // Enable player to input or not
     private bool enableInput = false;
 
+    // Stop JumpAction
+    private bool stopJump = false;
+
     // The previous obtained reward. We may double this reward if perform perfectly
     private int reward = 1;
 
@@ -74,6 +77,8 @@ public class Player : MonoBehaviour
             // When click the left button of mouse
             if (Input.GetMouseButtonDown(0))
             {
+                Debug.Log("パワーチャージ中……");
+
                 ///////////////// Start to charge the force
                 startAddForceTime = Time.time;
                 if (isJuicy)
@@ -85,14 +90,15 @@ public class Player : MonoBehaviour
                     // play audio clip for "add force"
                     audioManager.PlayAudio(enumAudioClip.AddForce);
                 }
-                
+
+                stopJump = false;
             }
             // When press the left button of the mouse,
             // squeeze down the stage, and scale down the y axis of character
             if (Input.GetMouseButton(0))
             {
                 // Give a boundary of scale down
-                if (stageManager.currentStage.transform.localScale.y > 0.4f)
+                if (!stopJump && (stageManager.currentStage.transform.localScale.y > 0.4f))
                 {
                     // Shrink the body
                     body.transform.localScale += new Vector3(1.5f, -1f, 1.5f) * 0.05f * Time.deltaTime;
@@ -102,12 +108,33 @@ public class Player : MonoBehaviour
                     stageManager.currentStage.transform.localScale += new Vector3(0, -1, 0) * 0.15f * Time.deltaTime;
                     stageManager.currentStage.transform.localPosition += new Vector3(0, -1, 0) * 0.15f * Time.deltaTime;
                 }
+
+                if (Input.GetMouseButtonDown(1))
+                {
+                    stopJump = true;
+
+                    //stop particle
+                    particleMain.SetActive(false);
+                    particleLanding.SetActive(true);
+
+                    // Recover character shape (using DOTween)
+                    body.transform.DOScale(new Vector3(bodyInitLocalScale.x, bodyInitLocalScale.y, bodyInitLocalScale.z), 0.2f);
+                    // The original local position for y is 0.29f
+                    head.transform.DOLocalMoveY(headInitLocalPosition.y, 0.2f);
+
+                    // Recover the shape of the stage
+                    stageManager.currentStage.transform.DOLocalMoveY(stageManager.stageInitPosition.y, 0.4f);
+                    stageManager.currentStage.transform.DOScaleY(stageManager.stageInitScale.y, 0.4f);
+
+                    // Turn off the audio component
+                    //GetComponent<AudioSource>().Stop();
+                    audioManager.audioSource.Stop();
+                }
             }
             // When release the button
-            if (Input.GetMouseButtonUp(0))
+            if (!stopJump && Input.GetMouseButtonUp(0))
             {
-                /////////////// forbid to continuous jump
-                enableInput = false;
+                
                 // Turn off the audio component
                 //GetComponent<AudioSource>().Stop();
                 audioManager.audioSource.Stop();
@@ -138,6 +165,8 @@ public class Player : MonoBehaviour
                 stageManager.currentStage.transform.DOLocalMoveY(stageManager.stageInitPosition.y, 0.4f);
                 stageManager.currentStage.transform.DOScaleY(stageManager.stageInitScale.y, 0.4f);
 
+                /////////////// forbid to continuous jump
+                enableInput = false;
             }
         }
     }
@@ -166,6 +195,8 @@ public class Player : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         rb.Sleep(); // sleep one frame after collision to avoid the swing
+
+        Debug.Log("OnCollision!!");
 
         //if (GameOver.activeInHierarchy)
         if (isGameOver == true)
@@ -202,9 +233,13 @@ public class Player : MonoBehaviour
             
 
         }
+        else if (stageManager.currentStage == collision.gameObject)
+        {
+            enableInput = true;
+        }
         else // if collision object is current stage, then enable input
         {
-            enableInput = true; // Default to be true for enabling input
+            enableInput = false; // Default to be true for enabling input
         }
     }
 
